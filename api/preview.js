@@ -81,7 +81,11 @@ export default async function handler(req, res) {
     const songUris = await Promise.all(searchPromises)
     
     // 3. filter nulls
-    const validUris = songUris.filter(uri => uri != null )
+    // const validUris = songUris.filter(uri => uri != null )
+
+    const validUris = songUris
+        .filter(data => data !== null)
+        .map(data => data.uri)
 
 
     console.log('Found URIs', validUris)
@@ -90,14 +94,30 @@ export default async function handler(req, res) {
     // send it now also isko json string me convert krdo bhjejne se pehle also one more thing si that res.jsonautometically does JSON.stringfy() for you....aww so sweet nigg
     // res.status(200).json(data) 
 
+//     res.status(200).json({
+//         playlistName: playlistName,
+//         songs: songs.map((song, index) => ({
+//             song: song.song,
+//             artist: song.artist,
+//             uri: songUris[index],
+//             found: songUris[index] !== null
+//         }) )
+// })
+
+
     res.status(200).json({
         playlistName: playlistName,
-        songs: songs.map((song, index) => ({
-            song: song.song,
-            artist: song.artist,
-            uri: songUris[index],
-            found: songUris[index] !== null
-        }) )
+        songs: songs.map((song, index) => {
+            const songData = songUris[index]
+            return {
+                song: song.song,
+                artist: song.artist,
+                uri: songData?.uri || null,
+                albumArt: songData?.albumArt || null,
+                externalUrl: songData?.externalUrl || null,
+                found: songData !== null
+            }
+        })
 })
 
 
@@ -131,8 +151,20 @@ async function searchSongOnSpotify(songObj, token) {
     // spotifyResponse = Raw HTTP response (data + headers + status)
     // but .josn() extract the body and parse karke js object bana dega 
 
-    if (spotifyData.tracks.items.length > 0) {
-        return spotifyData.tracks.items[0].uri
+    const track = spotifyData.tracks.items[0]
+
+    
+
+    // if (spotifyData.tracks.items.length > 0) {
+    //     return spotifyData.tracks.items[0].uri
+    // }
+
+    if(spotifyData.tracks.items.length > 0 ) {
+        return {
+            uri: track.uri,
+            albumArt: track.album.images[2]?.url || track.album.images[0]?.url,
+            externalUrl: track.external_urls.spotify
+        }
     }
 
     return null

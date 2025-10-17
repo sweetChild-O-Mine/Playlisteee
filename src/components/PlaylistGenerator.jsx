@@ -217,6 +217,7 @@ export const PlaylistGenerator = () => {
                     songName={song.song}
                     artistName={song.artist}
                     albumArt={song.albumArt}
+                    songUrl={song.externalUrl}
                     />
                   ))
                 }
