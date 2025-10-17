@@ -41,8 +41,34 @@ export const Callback = () => {
   },[code])
 
   return (
-    <div>
-        hi
+
+    <div className="min-h-screen w-full relative bg-black">
+    {/* Emerald Depths Background with Top Glow */}
+    <div
+      className="absolute inset-0 z-0"
+      style={{
+        background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(16, 185, 129, 0.25), transparent 70%), #000000",
+      }}
+    />
+
+      <div className='absolute min-h-screen w-full flex flex-col justify-center items-center '>
+        <div className="w-32 h-32">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+
+            <rect fill="#00C951" stroke="#00C951" stroke-width="14" width="30" height="30" x="25" y="50"><animate attributeName="y" calcMode="spline" dur="1.5" values="50;120;50;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.4"></animate></rect>
+
+            <rect fill="#00C951" stroke="#00C951" stroke-width="14" width="30" height="30" x="85" y="50"><animate attributeName="y" calcMode="spline" dur="1.5" values="50;120;50;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.2"></animate></rect>
+
+            <rect fill="#00C951" stroke="#00C951" stroke-width="14" width="30" height="30" x="145" y="50"><animate attributeName="y" calcMode="spline" dur="1.5" values="50;120;50;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="0"></animate></rect>
+          
+          </svg>
+
+        </div>
+
+        <p className="mt-6 text-neutral-200 text-xl font-semibold">
+          Authorizing with Spotify
+        </p>
+      </div>
     </div>
   )
 }

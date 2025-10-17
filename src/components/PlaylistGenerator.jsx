@@ -1,4 +1,12 @@
-import {useState} from 'react'
+import {useRef, useState, useEffect} from 'react'
+import vinyl from "../assets/BenBois_Vinyl_records.svg";
+import vinyl2 from "../assets/f3.webp";
+import cas3 from "../assets/c2.webp";
+import cas from "../assets/g1.png";
+import cas2 from "../assets/c1.png";
+import hi from '../assets/hi.mp4'
+import { SongCard } from './SongCard';
+import { SpotifyBtn } from './SpotifyBtn';
 
 export const PlaylistGenerator = () => {
 
@@ -41,6 +49,8 @@ export const PlaylistGenerator = () => {
       .catch(error => {
         console.error("error fetching data", error)
         setIsLoading(false)
+        // alert the user
+        alert("Failed to generate playlist. Please try again!!!")
       })
     }
 
@@ -87,14 +97,36 @@ export const PlaylistGenerator = () => {
     }
 
 
+    const textareaRef = useRef(null)
+
+    useEffect(() => {
+      const textarea = textareaRef.current
+      if(textarea) {
+        textarea.style.height = 'auto'
+        const newHeight = Math.min(textarea.scrollHeight, 72)
+        textarea.style.height = newHeight + 'px'
+      }
+    }, [prompt])
+
+
   return (
-    <div className='' >
-        <form 
-        className='border flex justify-center items-center mx-4 py-4 px-2 gap-x-2'
+    <div className=' flex flex-col gap-4 items-center py-4 px-8' >
+
+      {/* div for heading */}
+      <div className="">
+        <h1 className="text-5xl leading-tight text-center bg-gradient-to-r from-neutral-200 via-neutral-300 to-neutral-400 bg-clip-text text-transparent ">Make Any Playlist <br /> 
+        You Can Imagine
+        </h1>
+
+        <p className="text-lg text-neutral-300 text-center mt-4 ">Just Enter a Prompt and Get your Playlist</p>
+      </div>
+
+        {/* <form 
+        className='flex items-center gap-2'
         onSubmit={handleSubmit}
         >
-            <textarea 
-            className='rounded-full px-4 py-0.5 text-white bg-neutral-800'
+            <input 
+            className='rounded-full px-4 pt-2 text-white bg-neutral-800'
             value={prompt}
             onChange={((e) => setPrompt(e.target.value))}
             />
@@ -107,41 +139,115 @@ export const PlaylistGenerator = () => {
             <p className="">
               
             </p>
-        </form>
+        </form> */}
 
-        {/* previw sectoin :- only shhow if previewwData exist */}
+        {/* new form */}
+        <form className="relative w-[500px] mt-5 "
+        onSubmit={handleSubmit}
+        >
+          
+          {/* main container */}
+          <div className="relative group w-full ">
 
-          {previewData && (
-            <div className="border">
-              <h2>Preview: {previewData.playlistName} </h2>
-              {/* show how many songs youfound  */}
-              <p> Found {previewData.songs.filter(s => s.found).length} out of {previewData.songs.length} </p>
+            {/* glow layers */}
+            <div className="absolute inset-0 border bg-gradient-to-r from-emerald-800 via-teal-500 to-emerald-800 rounded-full blur-xl opacity-50 group-focus-within:opacity-75 transition-opacity duration-300
+            
+            "></div>
+            
 
-              {/* show the list of songs  */}
-              <ul className="bg-blue-300">
-                {previewData.songs
-                  .filter(s => s.found)
-                  .map((song, index) => (
-                  <li key={index} >
-                    {song.song} - {song.artist}
-                  </li>
-                ))}
-              </ul>
+            {/* the textarea container*/}
+            <div className="relative flex items-center gap-6 bg-neutral-900 rounded-full w-full px-4 pl-6 py-3 border border-neutral-500/30 ">
 
-              {/* add to spotify button */}
+              {/* main teactarea */}
+              <textarea 
+              ref={textareaRef}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder='Make a Country Playlist ft. of'
+              rows={1}
+              className='flex-1 bg-transparent text-neutral-200 placeholder:text-neutral-500 leading-6 resize-none outline-none overflow-y-auto 
+              [&::-webkit-scrollbar]:hidden
+              [-ms-overflow-style:name]
+              [scrollbar-width:none]
+              '
+              />
+
+              {/* button daalo re */}
               <button
-              onClick={handleAddToSpotify}
-              disabled= {isLoading}     //click hote hi isloading ko band kro bsdk
-              className="">
-                {isLoading ? "Adding..." : "Add to Spotify"}
+              className='bg-gradient-to-r from-emerald-700 to-green-900 text-white rounded-full p-3 hover:bg-emerald-600 hover:to-green-700 transition-all duration-300 hover:scale-105 '
+              type="submit"
+              disabled={isLoading || !prompt.trim()}
+              >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
 
               </button>
 
+            </div>
 
+          </div>
+
+        </form>
+
+
+        {/* previw sectoin :- only shhow if previewwData exist */}
+
+          {/* the real preview section */}
+          {previewData && (
+            // main containerr for the thing
+            <div className="w-full max-w-4xl mx-auto mt-0 space-y-4">
+
+              {/* playlist header */}
+              <div className="text-center mt-4 mb-6">
+                <h2 className="text-2xl font-bold text-neutral-300">
+                  {previewData.playlistName}
+                </h2>
+                {/* song kitne nmile woh dikhane ka mn toh nhi hai abhi so we'll see later(shyd) */}
+              </div>
+
+              {/* main contianer of the song list nigg */}
+              <div className="flex  flex-col items-center justify-center space-y-4">
+                {previewData.songs
+                  .filter((song) => song.found)     //firs ttake the found songs only 
+                  .map((song, index) => (
+                    <SongCard 
+                    key={index}
+                    index={index}
+                    songName={song.song}
+                    artistName={song.artist}
+                    albumArt={song.albumArt}
+                    />
+                  ))
+                }
+              </div>
+
+              {/* add to spotify button lgao bc */}
+              <div className="mt-8 flex justify-center items-center ">
+                <SpotifyBtn
+                text={`Add to Spotify`}
+                onCLickFn={handleAddToSpotify}
+                />
+
+              </div>
 
             </div>
 
+            
+
           )}
+
+
+          <div className="max-w-7xl mx-auto mt-8">
+            <img 
+            src={vinyl2}
+            alt="vinyl-img" 
+            height={700}
+            width={800}
+            className="object-contain mask-b-from-20% mask-b-to-80% opacity-60 mx-auto" />
+          </div>
+
+
 
     </div>
   )

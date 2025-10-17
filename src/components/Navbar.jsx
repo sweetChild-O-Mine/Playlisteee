@@ -8,7 +8,7 @@ export const Navbar = () => {
         <div className=" border-b-0  border-neutral-500 text-neutral-200 font-mono rounded-full flex justify-between items-center px-6 py-3">
             {/* first logo  */}
             <div className="font-semitb  font-mono text-lg ">
-                Playlisteee
+                Tunesmith
             </div>
 
             {/* div for link maybe  */}
